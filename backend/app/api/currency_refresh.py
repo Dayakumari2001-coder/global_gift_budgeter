@@ -33,8 +33,8 @@ def refresh_rate(from_currency: str, to_currency: str, db: Session = Depends(get
         existing_rate = db.query(
             ExchangeRate
         ).filter(
-            ExchangeRate.target_currency == from_currency,
-            ExchangeRate.base_currency == to_currency
+            ExchangeRate.from_currency == from_currency,
+            ExchangeRate.to_currency == to_currency
         ).first()
 
         if existing_rate:
@@ -42,8 +42,8 @@ def refresh_rate(from_currency: str, to_currency: str, db: Session = Depends(get
             existing_rate.last_updated = datetime.utcnow()
         else:
             existing_rate = ExchangeRate(
-                target_currency=from_currency,
-                base_currency=to_currency,
+                from_currency=from_currency,
+                to_currency=to_currency,
                 rate=rate_value
             )
             db.add(existing_rate)

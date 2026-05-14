@@ -47,8 +47,8 @@ def create_rate(rate_data: ExchangeRateCreate,db: Session = Depends(get_db)):
             detail="Rate already exists"
         )
     new_rate = ExchangeRate(
-        frng_currency=rate_data.target_currency.upper(),
-        base_currency=rate_data.base_currency.upper(),
+        from_currency=rate_data.from_currency.upper(),
+        to_currency=rate_data.to_currency.upper(),
         rate=rate_data.rate
     )
 
@@ -64,8 +64,8 @@ def delete_rate(from_currency: str, to_currency: str,
 ):
     """delete rate"""
     rate = db.query(ExchangeRate).filter(
-        ExchangeRate.target_currency == from_currency.upper(),
-        ExchangeRate.base_currency == to_currency.upper()
+        ExchangeRate.from_currency == from_currency.upper(),
+        ExchangeRate.to_currency == to_currency.upper()
     ).first()
     if not rate:
         raise HTTPException(status_code=404, detail="Rate not found")

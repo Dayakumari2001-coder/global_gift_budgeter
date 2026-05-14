@@ -9,7 +9,7 @@ from sqlalchemy import (
     func
 )
 from sqlalchemy.orm import relationship
-from database import Base
+from app.database import Base
 
 class User(Base):
     """user table"""
@@ -20,7 +20,7 @@ class User(Base):
     email = Column(String(150), unique=True, nullable=False,index=True)
     password_hash = Column(String(255), nullable=False)
     home_currency = Column(String(3), nullable=False, default="USD", index=True)
-    created_at = Column(TIMESTAMP, server_default=func.now())
+    created_at = Column(TIMESTAMP, server_default=func.now.fetch_value())
 
     wishlists = relationship("Wishlist",back_populates="user",cascade="all, delete")
 
@@ -35,7 +35,8 @@ class Wishlist(Base):
     description = Column( String(500))
 
     created_at = Column( TIMESTAMP, server_default=func.now())
-    updated_at = Column( TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    updated_at = Column( TIMESTAMP, server_default=func.now(),
+                        onupdate=func.now())
 
     user = relationship("User",back_populates="wishlists")
     items = relationship("WishlistItem", back_populates="wishlist",cascade="all, delete")
@@ -53,7 +54,8 @@ class WishlistItem(Base):
     converted_price = Column( DECIMAL(10, 2))
 
     created_at = Column(TIMESTAMP, server_default=func.now())
-    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(),
+                        onupdate=func.now())
 
     wishlist = relationship("Wishlist", back_populates="items")
 
@@ -62,7 +64,8 @@ class ExchangeRate(Base):
     __tablename__ = "exchange_rates"
 
     id = Column(Integer, primary_key=True, index=True)
-    target_currency = Column(String(3), nullable=False, index=True)
-    base_currency = Column( String(3), nullable=False, index=True)
+    from_currency = Column(String(3), nullable=False, index=True)
+    to_currency = Column( String(3), nullable=False, index=True)
     rate = Column(DECIMAL(10, 6), nullable=False)
-    last_updated = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    last_updated = Column(TIMESTAMP, server_default=func.now(),
+                          onupdate=func.now())

@@ -22,6 +22,7 @@ class UserResponse(BaseModel):
     created_at: datetime
 
     class ConfigDict:
+        """model_configration"""
         from_attributes = True
 
 class UserUpdate(BaseModel):
@@ -53,6 +54,7 @@ class WishlistResponse(BaseModel):
     updated_at: datetime
 
     class ConfigDict:
+        """model configration"""
         from_attributes = True
 
 # =====================================================
@@ -85,6 +87,7 @@ class WishlistItemResponse(BaseModel):
     updated_at: datetime
 
     class ConfigDict:
+        """model configration"""
         from_attributes = True
 
 # =====================================================
@@ -92,8 +95,8 @@ class WishlistItemResponse(BaseModel):
 # =====================================================
 class ExchangeRateCreate(BaseModel):
     """create exchange rate """
-    target_currency: str = Field(..., min_length=3, max_length=3)
-    base_currency: str = Field(..., min_length=3, max_length=3)
+    from_currency: str = Field(..., min_length=3, max_length=3)
+    to_currency: str = Field(..., min_length=3, max_length=3)
     rate: float = Field(..., gt=0)
 
 class ExchangeRateResponse(BaseModel):
@@ -103,8 +106,8 @@ class ExchangeRateResponse(BaseModel):
     to_currency: str
     rate: float
     last_updated: datetime
-    
     class ConfigDict:
+        """model configration"""
         from_attributes = True
 
 class ConversionResponse(BaseModel):

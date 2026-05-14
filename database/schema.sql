@@ -139,26 +139,26 @@ COLLATE=utf8mb4_unicode_ci;
 INSERT INTO exchange_rates
 (from_currency, to_currency, rate)
 VALUES
-('EUR', 'USD', 1.10),
-('GBP', 'USD', 1.27),
-('JPY', 'USD', 0.0067),
-('CHF', 'USD', 1.12),
-('CAD', 'USD', 0.74),
-('AUD', 'USD', 0.65),
-('CNY', 'USD', 0.14),
-('INR', 'USD', 0.012),
-('MXN', 'USD', 0.058),
-('BRL', 'USD', 0.20),
-('SGD', 'USD', 0.74),
-('HKD', 'USD', 0.128),
-('NOK', 'USD', 0.095),
-('SEK', 'USD', 0.094),
-('DKK', 'USD', 0.148),
-('RUB', 'USD', 0.011),
-('KRW', 'USD', 0.00077),
-('THB', 'USD', 0.028),
-('MYR', 'USD', 0.21),
-('PHP', 'USD', 0.018)
+('USD', 'EUR', 0.851900),
+('USD', 'GBP', 0.736800),
+('USD', 'JPY', 156.850000),
+('USD', 'CHF', 0.779700),
+('USD', 'CAD', 1.363700),
+('USD', 'AUD', 1.383800),
+('USD', 'CNY', 6.827700),
+('USD', 'INR', 95.957500),
+('USD', 'MXN', 17.120000),
+('USD', 'BRL', 5.440000),
+('USD', 'SGD', 1.347000),
+('USD', 'HKD', 7.820000),
+('USD', 'NOK', 10.720000),
+('USD', 'SEK', 10.520000),
+('USD', 'DKK', 6.870000),
+('USD', 'RUB', 89.500000),
+('USD', 'KRW', 1378.000000),
+('USD', 'THB', 36.740000),
+('USD', 'MYR', 4.690000),
+('USD', 'PHP', 57.300000) 
 
 ON DUPLICATE KEY UPDATE
 rate = VALUES(rate);

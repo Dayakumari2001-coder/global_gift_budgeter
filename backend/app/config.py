@@ -8,8 +8,16 @@ load_dotenv()
 class Settings:
     """Application settings loaded from environment variables."""
 
+    API_HOST: str
+    API_PORT: int
+
     #Database Configurtion
-    DATABASE_URL = os.getenv("DATABASE_URL")
+    DB_USER=os.getenv("DB_USER")
+    DB_PASSWORD=os.getenv("DB_PASSWORD")
+    DB_HOST=os.getenv("DB_HOST")
+    DB_NAME=os.getenv("DB_NAME")
+
+    DATABASE_URL = f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
     # API Configuration
     API_TITLE = "Global Gift Budgeter API"
@@ -18,13 +26,13 @@ class Settings:
 
     # Exchange Rate API Configuration
     EXCHANGE_RATE_API_KEY = os.getenv("EXCHANGE_RATE_API_KEY", "")
-    EXCHANGE_RATE_API_URL = "https://V6.exchangerate-api.com/v6{EXCHANGE_RATE_API_KEY}/latest/USD"
+    EXCHANGE_RATE_API_URL = f"https://v6.exchangerate-api.com/v6/{EXCHANGE_RATE_API_KEY}/latest/USD"
 
     # CORS Configuration
     ALLOWED_ORIGINS = [
-        "http://localhost:8000",
+        "http://localhost:3000",
         "http://localhost:5173",
-        "http://127.0.0.1:8000",
+        "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
     ]
 

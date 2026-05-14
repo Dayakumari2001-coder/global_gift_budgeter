@@ -10,7 +10,6 @@ router = APIRouter(
     prefix="/api/items",
     tags=["Wishlist Items"]
 )
-
 @router.post("/{wishlist_id}")
 def add_item(wishlist_id: int,item_data: WishlistItemCreate,db: Session = Depends(get_db)):
     """add item in wishlist."""
@@ -32,8 +31,8 @@ def add_item(wishlist_id: int,item_data: WishlistItemCreate,db: Session = Depend
         converted_price = item_data.foreign_price
     else:
         rate = db.query(ExchangeRate).filter(
-            ExchangeRate.target_currency == foreign_currency,
-            ExchangeRate.base_currency == home_currency
+            ExchangeRate.from_currency == home_currency,
+            ExchangeRate.to_currency ==foreign_currency
         ).first()
 
         if not rate:

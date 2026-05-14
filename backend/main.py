@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 
 from app.api import(
-    wishlist,
+    wishlists,
     wishlist_items,
     wishlist_summary,
     currency_rates,
@@ -12,7 +12,7 @@ from app.api import(
 
 app = FastAPI()
 
-app.include_router(wishlist.router)
+app.include_router(wishlists.router)
 app.include_router(wishlist_items.router)
 app.include_router(wishlist_summary.router)
 app.include_router(currency_rates.router)
