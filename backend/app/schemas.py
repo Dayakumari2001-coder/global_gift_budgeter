@@ -7,11 +7,16 @@ from datetime import datetime
 # USER SCHEMAS
 # =====================================================
 class UserCreate(BaseModel):
-    """user create with their name,email, passward, home currency."""
+    """user register with their name,email, passward, home currency."""
     name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
     password: str = Field(..., min_length=6)
     home_currency: str = Field(..., min_length=3, max_length=3)
+
+class UserLogin(BaseModel):
+    """user login"""
+    email: EmailStr
+    password: str = Field(..., min_length=6)
 
 class UserResponse(BaseModel):
     """user response"""
@@ -29,6 +34,11 @@ class UserUpdate(BaseModel):
     """user can update name, home currency """
     name: Optional[str] = None
     home_currency: Optional[str] = Field(None, min_length=3, max_length=3)
+
+class Token(BaseModel):
+    """token"""
+    access_token: str
+    token_type: str
 
 # =====================================================
 # WISHLIST SCHEMAS
