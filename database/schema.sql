@@ -196,15 +196,16 @@ BEGIN
         u.home_currency;
 END //
 
-DELIMITER ;
+--DELIMITER ;
 
 -- =====================================================
--- VIEW FOR QUICK SUMMARY
+-- VIEW FOR QUICK SUMMARY(used in code directly)
 -- =====================================================
 CREATE VIEW v_wishlist_summary AS
 
 SELECT
     w.id AS wishlist_id,
+    u.id AS user_id
     w.wishlist_name,
     u.name AS user_name,
     u.home_currency,
@@ -212,17 +213,18 @@ SELECT
 
     COALESCE(
         SUM(wi.converted_price),
-        0
+       0
     ) AS total_budget,
     MIN(wi.created_at) AS first_item_added,
     MAX(wi.updated_at) AS latest_item_update
-FROM wishlists w
-JOIN users u
+    FROM wishlists w
+    JOIN users u
     ON w.user_id = u.id
-LEFT JOIN wishlist_items wi
+    LEFT JOIN wishlist_items wi
     ON w.id = wi.wishlist_id
-GROUP BY
-    w.id,
-    w.wishlist_name,
-    u.name,
-    u.home_currency;
+    WHERE u.id = current_user.id
+    GROUP BY
+        w.id,
+        w.wishlist_name,
+        u.name,
+        u.home_currency;

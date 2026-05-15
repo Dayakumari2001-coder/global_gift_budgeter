@@ -1,18 +1,18 @@
 """ This file handles database configuration and MySQL connection setup using SQLAlchemy"""
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base, scoped_session
 from app.config import settings
 
 engine = create_engine(
     settings.DATABASE_URL,
-    echo=False
+    echo=False, pool_pre_ping=True
 )
 
-SESSIONLOCAL = sessionmaker(
+SESSIONLOCAL = scoped_session(sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine
-)
+))
 
 # BASE CLASS
 Base = declarative_base()
