@@ -14,27 +14,23 @@ router = APIRouter(
     tags=["Currency Refresh"]
 )
 
-@router.post("/{from_currency}/{to_currency}")
-def refresh_rate(from_currency: str, to_currency: str, db: Session = Depends(get_db)):
+@router.post("/{to_currency}")
+def refresh_rate(to_currency: str, db: Session = Depends(get_db)):
     """refresh rate"""
-    from_currency = from_currency.upper()
     to_currency = to_currency.upper()
     try:
-        url = (
-            f"{settings.EXCHANGE_RATE_API_URL}"
-            f"{from_currency}"
-        )
+        url = settings.EXCHANGE_RATE_API_URL
         response = requests.get(url, timeout=5)
         data = response.json()
-        rate_value = data["rates"].get( to_currency)
+        rate_value = data["conversion_rates"].get( to_currency)
 
         if not rate_value:
             raise HTTPException( status_code=404, detail="Currency not supported")
         existing_rate = db.query(
             ExchangeRate
         ).filter(
-            ExchangeRate.from_currency == from_currency,
-            ExchangeRate.to_currency == to_currency
+            ExchangeRate.from_currency =="USD",
+            ExchangeRate.to_currency ==to_currency
         ).first()
 
         if existing_rate:
@@ -42,7 +38,7 @@ def refresh_rate(from_currency: str, to_currency: str, db: Session = Depends(get
             existing_rate.last_updated = datetime.utcnow()
         else:
             existing_rate = ExchangeRate(
-                from_currency=from_currency,
+                from_currency="USD",
                 to_currency=to_currency,
                 rate=rate_value
             )

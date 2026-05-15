@@ -1,6 +1,7 @@
 """This file handles:currency conversion logic"""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from decimal import Decimal
 
 from app.database import get_db
 from app.models import ExchangeRate
@@ -32,18 +33,31 @@ def convert_currency(
             "currency": to_currency
         }
 
-    rate = db.query(ExchangeRate).filter(
-        ExchangeRate.from_currency == from_currency,
+    from_rate = db.query(ExchangeRate).filter(
+        ExchangeRate.from_currency == "USD",
+        ExchangeRate.to_currency == from_currency
+    ).first()
+
+    to_rate = db.query(ExchangeRate).filter(
+        ExchangeRate.from_currency == "USD",
         ExchangeRate.to_currency == to_currency
     ).first()
 
+    if not from_rate or not to_rate:
+        raise HTTPException(
+            status_code=404,
+            detail="Currency not found in exchange_rate data."
+        )
+    rate = (
+        to_rate.rate / from_rate.rate
+    )
     if not rate:
         raise HTTPException(status_code=404, detail="Exchange rate not found")
-    converted_amount = amount * rate.rate
+    converted_amount = Decimal(str(amount)) * rate
     return {
         "original_amount": amount,
         "from_currency": from_currency,
         "to_currency": to_currency,
-        "exchange_rate": rate.rate,
+        "exchange_rate": rate,
         "converted_amount": round(converted_amount, 2)
     }

@@ -16,10 +16,25 @@ router = APIRouter(
 @router.get("/{from_currency}/{to_currency}")
 def get_rate(from_currency: str, to_currency: str, db: Session = Depends(get_db)):
     """get single rate"""
-    rate = db.query(ExchangeRate).filter(
-        ExchangeRate.from_currency == from_currency.upper(),
-        ExchangeRate.to_currency == to_currency.upper()
+
+    from_rate = db.query(ExchangeRate).filter(
+        ExchangeRate.from_currency == "USD",
+        ExchangeRate.to_currency == from_currency
     ).first()
+
+    to_rate = db.query(ExchangeRate).filter(
+        ExchangeRate.from_currency == "USD",
+        ExchangeRate.to_currency == to_currency
+    ).first()
+
+    if not from_rate or not to_rate:
+        raise HTTPException(
+            status_code=404,
+            detail="Currency not found in exchange rate data."
+        )
+    rate = (
+        to_rate.rate / from_rate.rate
+    )
 
     if not rate:
         raise HTTPException(status_code=404, detail="Exchange rate not found")
