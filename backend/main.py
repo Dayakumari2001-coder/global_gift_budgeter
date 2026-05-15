@@ -2,6 +2,7 @@
 from fastapi import FastAPI
 
 from app.api import(
+    users,
     wishlists,
     wishlist_items,
     wishlist_summary,
@@ -12,6 +13,7 @@ from app.api import(
 
 app = FastAPI()
 
+app.include_router(users.router)
 app.include_router(wishlists.router)
 app.include_router(wishlist_items.router)
 app.include_router(wishlist_summary.router)

@@ -1,9 +1,10 @@
 """This file handles:add, get, update, delete items"""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from decimal import Decimal
 
 from app.database import get_db
-from app.models import (User, Wishlist, WishlistItem, ExchangeRate)
+from app.models import (User, Wishlist, WishlistItem,ExchangeRate)
 from app.schemas import (WishlistItemCreate, WishlistItemUpdate)
 
 router = APIRouter(
@@ -30,16 +31,25 @@ def add_item(wishlist_id: int,item_data: WishlistItemCreate,db: Session = Depend
     if foreign_currency == home_currency:
         converted_price = item_data.foreign_price
     else:
-        rate = db.query(ExchangeRate).filter(
-            ExchangeRate.from_currency == home_currency,
-            ExchangeRate.to_currency ==foreign_currency
+        from_rate = db.query(ExchangeRate).filter(
+            ExchangeRate.from_currency == "USD",
+            ExchangeRate.to_currency == foreign_currency
         ).first()
 
-        if not rate:
-            raise HTTPException(status_code=404, detail="Exchange rate not found")
-        converted_price=(
-            item_data.foreign_price * rate.rate
+        to_rate = db.query(ExchangeRate).filter(
+            ExchangeRate.from_currency == "USD",
+            ExchangeRate.to_currency == home_currency
+        ).first()
+
+        if not from_rate or not to_rate:
+            raise HTTPException(
+                status_code=404,
+                detail="Currency not found in exchange_rate data."
+            )
+        rate = (
+            to_rate.rate / from_rate.rate
         )
+        converted_price = Decimal(str(item_data.foreign_price)) * rate
 
     new_item = WishlistItem(
         wishlist_id=wishlist_id,
@@ -53,9 +63,7 @@ def add_item(wishlist_id: int,item_data: WishlistItemCreate,db: Session = Depend
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
-
     return new_item
-
 
 # GET ITEMS
 @router.get("/{wishlist_id}")
@@ -66,7 +74,6 @@ def get_items(wishlist_id: int, db: Session = Depends(get_db)):
     ).all()
 
     return items
-
 
 # UPDATE ITEM
 @router.put("/{item_id}")

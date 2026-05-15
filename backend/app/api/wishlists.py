@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import User, Wishlist
+from app.auth import get_current_user
 from app.schemas import (
+    
     WishlistCreate,
     WishlistUpdate,
     WishlistResponse
@@ -45,10 +47,12 @@ def get_user_wishlists(user_id: int, db: Session = Depends(get_db)):
     return wishlists
 
 @router.get("/{wishlist_id}")
-def get_wishlist(wishlist_id: int, db: Session = Depends(get_db)):
+def get_wishlist(wishlist_id: int, current_user: User = Depends(get_current_user),
+                  db: Session = Depends(get_db)):
     """get single wishlist"""
     wishlist = db.query(Wishlist).filter(
-        Wishlist.id == wishlist_id
+        Wishlist.id == wishlist_id,
+        Wishlist.user_id == current_user.id
     ).first()
 
     if not wishlist:
