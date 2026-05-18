@@ -45,21 +45,20 @@ class Token(BaseModel):
 # =====================================================
 class WishlistCreate(BaseModel):
     """creatte wishlist"""
-    user_id: int
     wishlist_name: str = Field(..., min_length=2, max_length=255)
-    description: Optional[str] = None
+    description: Optional[str] | None = None
 
 class WishlistUpdate(BaseModel):
     """update wishlist"""
     wishlist_name: str = Field(..., min_length=2, max_length=255)
-    description: Optional[str] = None
+    description: Optional[str] | None = None
 
 class WishlistResponse(BaseModel):
     """wishlist response"""
     id: int
     user_id: int
     wishlist_name: str
-    description: Optional[str]
+    description: Optional[str] | None
     created_at: datetime
     updated_at: datetime
 

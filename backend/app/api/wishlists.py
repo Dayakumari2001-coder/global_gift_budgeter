@@ -3,10 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import User, Wishlist
 from app.auth import get_current_user
+from app.models import User, Wishlist
 from app.schemas import (
-    
     WishlistCreate,
     WishlistUpdate,
     WishlistResponse
@@ -17,17 +16,27 @@ router = APIRouter(
     tags=["Wishlists"]
 )
 
-@router.post("/", response_model=WishlistResponse)
-def create_wishlist(wishlist_data: WishlistCreate, db: Session = Depends(get_db)):
+@router.get("/my")
+def get_my_wishlists(db: Session = Depends(get_db),
+                     current_user: User =Depends(get_current_user)):
+    """get all wishlists of user."""
+    wishlists = db.query(Wishlist).filter(
+        Wishlist.user_id == current_user.id
+    ).all()
+    return wishlists
+
+@router.post("/", response_model=WishlistResponse, status_code=201)
+def create_wishlist(wishlist_data: WishlistCreate, db: Session = Depends(get_db),
+                    current_user: User = Depends(get_current_user)):
     """create new wishlist."""
     user = db.query(User).filter(
-        User.id == wishlist_data.user_id
+        User.id == current_user.id
     ).first()
     if not user:
         raise HTTPException(status_code=404,detail="User not found")
 
     new_wishlist = Wishlist(
-        user_id=wishlist_data.user_id,
+        user_id=current_user.id,
         wishlist_name=wishlist_data.wishlist_name,
         description=wishlist_data.description
     )
@@ -37,14 +46,6 @@ def create_wishlist(wishlist_data: WishlistCreate, db: Session = Depends(get_db)
     db.refresh(new_wishlist)
 
     return new_wishlist
-
-@router.get("/user/{user_id}")
-def get_user_wishlists(user_id: int, db: Session = Depends(get_db)):
-    """get all wishlists of user."""
-    wishlists = db.query(Wishlist).filter(
-        Wishlist.user_id == user_id
-    ).all()
-    return wishlists
 
 @router.get("/{wishlist_id}")
 def get_wishlist(wishlist_id: int, current_user: User = Depends(get_current_user),
