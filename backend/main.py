@@ -1,6 +1,6 @@
 """This module contains the backend logic for the main application."""
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.api import(
     users,
     wishlists,
@@ -12,6 +12,14 @@ from app.api import(
 )
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(users.router)
 app.include_router(wishlists.router)
