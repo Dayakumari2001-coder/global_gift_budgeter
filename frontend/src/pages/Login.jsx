@@ -5,6 +5,8 @@ import "../styles/auth.css";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -12,16 +14,24 @@ function Login() {
       const response = await API.post(
         "/users/login",
         {
-          email,
-          password
+          email: email,
+          password: password
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-      localStorage.setItem("token", response.data.access_token)
-      alert("Login Successful");
-      navigate("/dashboard");
+      localStorage.setItem("token", response.data.access_token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      setSuccess("Login successful! Redirecting to dashboard...");
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
     } catch (error) {
       console.log(error.response?.data);
-      alert(error.response?.data?.detail|| "Login Failed");
+      setError(error.response?.data?.detail || "Login Failed");
     }
   };
   return (
@@ -51,6 +61,8 @@ function Login() {
               value={email} onChange={(e) =>setEmail(e.target.value)} />
             <input type="password" placeholder="Enter your password"
               value={password} onChange={(e) =>setPassword(e.target.value)}/>
+            {error && <div className="auth-error">{error}</div>}
+            {success && <div className="auth-success">{success}</div>}
             <button type="submit"> Login </button>
           </form>
           <div className="auth-footer">

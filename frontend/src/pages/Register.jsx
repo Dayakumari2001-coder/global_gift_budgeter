@@ -1,30 +1,45 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import currencyCodes from "currency-codes";
 import API from "../services/api";
 import "../styles/auth.css";
+import {getCurrencyDetails} from "../utils/Helpers";
+import { getCurrencies } from "../api/currency";
 
 function Register() {
   // CREATE OPTIONS
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const [homeCurrency, setHomeCurrency] = useState("");
-  const currencyOptions = currencyCodes.codes().map(
-    (code) => {
-      const currency = currencyCodes.code(code);
-      return {
-        value: currency.code,
-        label: `${currency.code} - ${currency.currency}`
-      };
+  const [currencyOptions, setCurrencyOptions] = useState([]);
+
+  useEffect(() => {
+    fetchCurrencies();
+  }, []);
+
+  async function fetchCurrencies() {
+    try {
+      const response = await getCurrencies();
+      const formatted=response.data.map((code) =>{
+      const details=getCurrencyDetails(code);
+      return{
+        value:details.code,
+        label:`${details.flag} ${details.code} — ${details.name} (${details.symbol})`
+      }
+    });
+      setCurrencyOptions(formatted);
+    } catch (error) {
+      console.error("Error fetching currencies:", error);
     }
-  );
+  }
 
   // CUSTOM SELECT STYLES
   const customSelectStyles = {
     control: (provided, state) => ({...provided,
-      minHeight: "52px",
+      minHeight: "42px",
       paddingLeft: "8px",
       borderRadius: "10px",
       borderColor: state.isFocused ? "#7406d4" : "#d1d5db",
@@ -51,7 +66,7 @@ function Register() {
     e.preventDefault();
     try {
       const response = await API.post(
-        "/api/users/register",
+        "/users/register",
         {
           name,
           email,
@@ -60,10 +75,13 @@ function Register() {
         }
       );
       console.log(response.data);
-      alert("Registration Successful");
+      setSuccess("Registration successful! Redirecting to login...");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
     } catch (error) {
       console.log(error.response?.data);
-      alert(error.response?.data?.detail|| "Registration Failed");
+      setError(error.response?.data?.detail || "Registration Failed");
     }
   };
   const handleLogin = async (e) => {
@@ -77,9 +95,8 @@ function Register() {
         }
       );
       console.log(response.data);
-      // SAVE TOKEN
       localStorage.setItem("token", response.data.access_token);
-      alert("Login Successful");
+      window.location.href = "/dashboard";
     } catch (error) {
       console.log(error.response?.data);
       alert(error.response?.data?.detail|| "Login Failed");
@@ -125,7 +142,9 @@ function Register() {
               className="currency-select"
               styles={customSelectStyles}
               isSearchable
-              onChange={(selectOption)=>setHomeCurrency(selectOption.value)}/>
+              onChange={(selected) => setHomeCurrency(selected.value)}/>
+            {error && <div className="auth-error">{error}</div>}
+            {success && <div className="auth-success">{success}</div>}
             <button type="submit">Create Account</button>
           </form>
           <div className="auth-footer">
