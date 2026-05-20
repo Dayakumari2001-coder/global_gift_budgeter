@@ -26,7 +26,7 @@ class User(Base):
 
 
 class Wishlist(Base):
-    """wishlist tabble"""
+    """wishlist table"""
     __tablename__ = "wishlists"
 
     id = Column(Integer, primary_key=True, index=True)

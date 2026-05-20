@@ -1,6 +1,7 @@
 """This file handles user login, registration and profile related function."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from app.api.currency_refresh import refresh_rates
 from ..database import get_db
 from ..models import User
 from ..schemas import (
@@ -57,10 +58,20 @@ def login_user(user_data: UserLogin, db: Session = Depends(get_db)):
     if not valid_password:
         raise HTTPException(status_code=401, detail="Invalid email or password")
     access_token = create_access_token(data={"user_id": user.id})
-
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_rates(db)  # Refresh rates on login to ensure user gets the latest rates
+    return{
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "home_currency":
+                user.home_currency
+        }
+    }
 
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
-    """currenct user"""
+    """current user"""
     return current_user

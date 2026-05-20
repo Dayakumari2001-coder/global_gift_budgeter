@@ -39,7 +39,7 @@ class Token(BaseModel):
     """token"""
     access_token: str
     token_type: str
-
+    user: dict
 # =====================================================
 # WISHLIST SCHEMAS
 # =====================================================

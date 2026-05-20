@@ -14,38 +14,53 @@ router = APIRouter(
     tags=["Currency Refresh"]
 )
 
-@router.post("/{to_currency}")
-def refresh_rate(to_currency: str, db: Session = Depends(get_db)):
-    """refresh rate"""
-    to_currency = to_currency.upper()
+@router.post("/all")
+def refresh_rates(db: Session = Depends(get_db)):
+    """Fetch latest rates from API and update database."""
     try:
         url = settings.EXCHANGE_RATE_API_URL
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=10)
         data = response.json()
-        rate_value = data["conversion_rates"].get( to_currency)
+        rates = data.get( "conversion_rates")
+        if not rates:
+            raise HTTPException(status_code=500, detail="Invalid API response" )
+        
+        updated_count = 0
 
-        if not rate_value:
-            raise HTTPException( status_code=404, detail="Currency not supported")
-        existing_rate = db.query(
-            ExchangeRate
-        ).filter(
-            ExchangeRate.from_currency =="USD",
-            ExchangeRate.to_currency ==to_currency
-        ).first()
+        for currency, rate_value in rates.items():
+            existing_rate = db.query(
+                ExchangeRate
+            ).filter(
+                ExchangeRate.from_currency == "USD",
+                ExchangeRate.to_currency == currency
+            ).first()
 
-        if existing_rate:
-            existing_rate.rate = rate_value
-            existing_rate.last_updated = datetime.utcnow()
-        else:
-            existing_rate = ExchangeRate(
-                from_currency="USD",
-                to_currency=to_currency,
-                rate=rate_value
-            )
-            db.add(existing_rate)
+            if existing_rate:
+                existing_rate.rate = rate_value
+                existing_rate.last_updated = (
+                    datetime.utcnow()
+                )
+            else:
+                new_rate = ExchangeRate(
+                    from_currency="USD",
+                    to_currency=currency,
+                    rate=rate_value,
+                    last_updated=
+                        datetime.utcnow()
+                )
+                db.add(new_rate)
+            updated_count += 1
+
         db.commit()
-        db.refresh(existing_rate)
+        return {
+            "message":"All currencies updated",
+            "total":
+                updated_count
+        }
 
-        return {"message": "Rate updated","rate": existing_rate.rate}
     except Exception as exe:
-        raise HTTPException( status_code=500, detail="Failed to refresh rate")from exe
+        raise HTTPException(
+            status_code=500,
+            detail=
+                f"Failed: {str(exe)}"
+        )from exe
