@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { getMyWishlists,createWishlist,deleteWishlist } from "../api/wishlist";
 import WishlistForm from "../components/wishlist/WishlistForm";
 import WishlistCard from "../components/wishlist/WishlistCard";
+import Navbar from "../components/Navbar";
 import API from "../services/api";
 import "../styles/dashboard.css";
 import "../styles/wishlist.css";
+
 
 function Dashboard() {
   const [wishlists, setWishlists] = useState([]);
@@ -60,6 +62,7 @@ function Dashboard() {
     //MAIN UI
     return (
       <div className="dashboard-page">
+        <Navbar />
         <div className="dashboard-header">
           <div>
             <h1>My Wishlists</h1> 

@@ -1,7 +1,7 @@
 /* PAGE */
 .dashboard-page {
   min-height: 100vh;
-  padding: 40px;
+  padding: 22px;
   background:
     linear-gradient(
       135deg,
@@ -15,55 +15,60 @@
 
 /* HEADER */
 .dashboard-header {
-  margin-bottom: 35px;
+  margin-bottom: 22px;
 }
+
 .dashboard-header h1 {
-  font-size: 42px;
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
+
 .dashboard-header p {
-  font-size: 16px;
-  opacity: 0.9;
+  font-size: 13px;
+  opacity: 0.85;
 }
 
 /* SECTION */
 .dashboard-section {
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
+/* LOADING */
 .dashboard-loading {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background:
-  linear-gradient(
-    135deg,
-    #4b2cbf,
-    #6a5cff,
-    #8b7dff
-  );
+    linear-gradient(
+      135deg,
+      #4b2cbf,
+      #6a5cff,
+      #8b7dff
+    );
   color: white;
+  font-size: 16px;
 }
 
 /* ERROR */
 .dashboard-error {
-  padding: 16px;
-  margin-bottom: 25px;
-  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 12px;
   background:
     rgba(255,255,255,0.12);
   border:
     1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(12px);
   color: white;
+  font-size: 13px;
 }
 
 /* EMPTY STATE */
 .empty-state {
-  padding: 60px;
-  border-radius: 24px;
+  padding: 40px 24px;
+  border-radius: 18px;
   text-align: center;
   background:
     rgba(255,255,255,0.12);
@@ -71,32 +76,59 @@
     1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(12px);
 }
+
 .empty-state h2 {
-  font-size: 30px;
-  margin-bottom: 14px;
+  font-size: 22px;
+  margin-bottom: 10px;
 }
+
 .empty-state p {
-  opacity: 0.9;
-  line-height: 1.6;
+  opacity: 0.85;
+  line-height: 1.5;
+  font-size: 13px;
 }
 
 /* GRID */
 .wishlist-grid {
   display: grid;
   grid-template-columns:
-    repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+    repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
+
   .dashboard-page {
-    padding: 20px;
+    padding: 16px;
   }
+
+  .dashboard-header {
+    margin-bottom: 18px;
+  }
+
   .dashboard-header h1 {
-    font-size: 32px;
+    font-size: 22px;
   }
+
+  .dashboard-header p {
+    font-size: 12px;
+  }
+
+  .dashboard-section {
+    margin-bottom: 18px;
+  }
+
   .empty-state {
-    padding: 40px 20px;
+    padding: 30px 18px;
+  }
+
+  .empty-state h2 {
+    font-size: 18px;
+  }
+
+  .wishlist-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 }

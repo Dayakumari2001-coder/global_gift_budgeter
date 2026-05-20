@@ -1,4 +1,12 @@
-function ItemsTable({ items }) {
+function ItemsTable({ items, onDeleteItem, onEditItem }) {
+ if (items.length === 0) {
+    return(
+    <div className="items-empty-state">
+      <h3>No items added yet</h3>
+      <p>Start by adding an item to your wishlist!</p>
+    </div>
+    );
+  }
 
   return (
     <table className="items-table">
@@ -10,6 +18,7 @@ function ItemsTable({ items }) {
           <th>Price</th>
           <th>Currency</th>
           <th>Converted</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +30,10 @@ function ItemsTable({ items }) {
             <td>{item.foreign_price}</td>
             <td>{item.foreign_currency}</td>
             <td>{item.converted_price}</td>
+            <td>
+              <button className="primary-btn" onClick={()=>onEditItem(item)}>Edit</button>
+              <button className="secondary-btn" onClick={()=>onDeleteItem(item)}>Delete</button>
+            </td>
           </tr>
         ))}
       </tbody>

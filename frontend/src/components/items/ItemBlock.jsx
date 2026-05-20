@@ -17,7 +17,7 @@ function ItemBlock({
         <span>
           {item.foreign_price}
           {" "}
-          {item.foreign_currency}
+          {item.foreign_currency?.value || item.foreign_currency}
         </span>
       </div>
       <div className="item-converted">
