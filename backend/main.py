@@ -8,6 +8,7 @@ from app.api import(
     wishlists,
     wishlist_items,
     wishlist_summary,
+    profile,
     currency,
     currency_rates,
     currency_convert,
@@ -28,6 +29,7 @@ app.include_router(users.router)
 app.include_router(wishlists.router)
 app.include_router(wishlist_items.router)
 app.include_router(wishlist_summary.router)
+app.include_router(profile.router)
 app.include_router(currency.router)
 app.include_router(currency_rates.router)
 app.include_router(currency_convert.router)

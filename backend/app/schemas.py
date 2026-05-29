@@ -33,6 +33,7 @@ class UserResponse(BaseModel):
 class UserUpdate(BaseModel):
     """user can update name, home currency """
     name: Optional[str] = None
+    email: Optional[str]= None
     home_currency: Optional[str] = Field(None, min_length=3, max_length=3)
 
 class Token(BaseModel):

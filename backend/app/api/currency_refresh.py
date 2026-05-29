@@ -24,7 +24,7 @@ def refresh_rates(db: Session = Depends(get_db)):
         rates = data.get( "conversion_rates")
         if not rates:
             raise HTTPException(status_code=500, detail="Invalid API response" )
-        
+
         updated_count = 0
 
         for currency, rate_value in rates.items():
