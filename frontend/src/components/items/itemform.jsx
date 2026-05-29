@@ -4,15 +4,29 @@ import "../../styles/item.css";
 import { getCurrencyDetails } from "../../utils/Helpers";
 import { getCurrencies } from "../../api/currency";
 
-function ItemForm({onAddItem, adding}) {
-  const [itemName, setItemName] = useState("");
-  const [description, setDescription] =useState("");
-  const [foreignPrice, setForeignPrice] =useState("");
-  const [foreignCurrency,setForeignCurrency] =useState("USD");
+function ItemForm({onAddItem, adding,editing, initialData, isEditing, onCancelEdit}) {
+  const [itemName, setItemName] = useState(initialData?.item_name || "");
+  const [description, setDescription] =useState(initialData?.description || "");
+  const [foreignPrice, setForeignPrice] =useState(initialData?.foreign_price || "");
+  const [foreignCurrency,setForeignCurrency] =useState(initialData?.foreign_currency || "USD");
   const [currencyOptions, setCurrencyOptions] = useState([]);
   useEffect(() => {
     fetchCurrencies();
   }, []);
+
+  useEffect(()=>{
+    if (initialData){
+      setItemName(initialData.item_name);
+      setDescription(initialData.description || "");
+      setForeignPrice(initialData.foreign_price);
+      setForeignCurrency(initialData.foreign_currency);
+    }else{
+      setItemName("");
+      setDescription("");
+      setForeignPrice("");
+      setForeignCurrency("USD");
+    }
+  },[initialData]);
 
   async function fetchCurrencies() {
     try {
@@ -65,6 +79,7 @@ function ItemForm({onAddItem, adding}) {
       overflow: "hidden"
     }),
   };
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!itemName.trim()) {
@@ -79,18 +94,19 @@ function ItemForm({onAddItem, adding}) {
       item_name: itemName,
       description: description,
       foreign_price: parseFloat(foreignPrice),
-      foreign_currency: foreignCurrency
+      foreign_currency: foreignCurrency.toUpperCase()
     };
-    await onAddItem(itemData);
-    setItemName("");
-    setDescription("");
-    setForeignPrice("");
-    setForeignCurrency("USD");
+    try {
+      await onAddItem(itemData);
+    } catch (error) {
+      console.error("Error adding/updating item:", error);
+    }
   }
+
   return (
-    <form className="item-form" onSubmit={handleSubmit}>
+    <form className={isEditing ? "item-form editing-mode" : "item-form"} onSubmit={handleSubmit}>
       <h2 className="item-form-title">
-        Add New Item
+        {isEditing ? `✏️ Editing: ${itemName}` : "Add New Item"}
       </h2>
       {/* ITEM NAME */}
       <div className="form-group">
@@ -151,15 +167,38 @@ function ItemForm({onAddItem, adding}) {
         />
       </div>
       {/* BUTTON */}
+      
       <button
         type="submit"
         className="primary-btn"
-        disabled={adding}
+        disabled={isEditing ? editing : adding}
       >
-        {adding
-          ? "Adding..."
-          : "Add Item"}
+        {isEditing ? (
+          editing
+            ? "Updating..."
+            : "Save Changes"
+        ) : (
+          adding
+            ? "Adding..."
+            : "Add Item"
+        )}
       </button>
+
+      {isEditing && (
+
+        <button
+          type="button"
+          className="cancel-btn"
+          onClick={onCancelEdit}
+        >
+          Cancel Edit
+        </button>
+      )}
+      {isEditing && (
+        <div className="editing-note">
+          You are currently editing this item.
+        </div>
+      )}
     </form>
   );
 }

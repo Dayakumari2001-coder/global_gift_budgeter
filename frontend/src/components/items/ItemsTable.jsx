@@ -31,8 +31,20 @@ function ItemsTable({ items, onDeleteItem, onEditItem }) {
             <td>{item.foreign_currency}</td>
             <td>{item.converted_price}</td>
             <td>
-              <button className="primary-btn" onClick={()=>onEditItem(item)}>Edit</button>
-              <button className="secondary-btn" onClick={()=>onDeleteItem(item)}>Delete</button>
+                <button
+                  type="button"
+                  className="primary-btn"
+                  onClick={() => onEditItem(item)}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={() => onDeleteItem(item.id)}
+                >
+                  Delete
+                </button>
             </td>
           </tr>
         ))}

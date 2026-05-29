@@ -1,8 +1,8 @@
 import {useState} from "react";
 
-function WishlistForm({ onCreate, creating }) {
-    const [wishlistName, setWishlistName] = useState("");
-    const [description, setDescription] = useState("");
+function WishlistForm({ onCreate, creating ,initialData, isEditing, editing, onCancelEdit}){
+    const [wishlistName,setWishlistName] = useState( initialData?.wishlist_name || "" );
+    const [description, setDescription] = useState(initialData?.description || "" );
     async function handleSubmit(e) {
         e.preventDefault();
         if (!wishlistName.trim()) {
@@ -29,9 +29,37 @@ function WishlistForm({ onCreate, creating }) {
                 <textarea placeholder="Wishlist description" value={description}
                 onChange={(e) => setDescription(e.target.value)} />
             </div>
-            <button type="submit" className="primary-btn" disabled={creating}>
-                {creating ? "Creating..." : "Create Wishlist"}
-            </button>
+           <button
+                type="submit"
+                className="primary-btn"
+                disabled={
+                    isEditing
+                    ? editing
+                    : creating
+                }
+                >
+                {isEditing
+                    ? (
+                        editing
+                        ? "Updating..."
+                        : "Save Changes"
+                    )
+                    : (
+                        creating
+                        ? "Creating..."
+                        : "Create Wishlist"
+                    )
+                }
+                </button>
+                {isEditing && (
+                <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={onCancelEdit}
+                >
+                    Cancel
+                </button>
+                )}
         </form>
     );
 }
