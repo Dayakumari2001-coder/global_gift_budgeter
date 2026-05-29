@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import API from "../services/api";
 import "../styles/auth.css";
+import BackButton from "../components/BackButton";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +29,7 @@ function Login() {
       setSuccess("Login successful! Redirecting to dashboard...");
       setTimeout(() => {
         window.location.href = "/dashboard";
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.log(error.response?.data);
       setError(error.response?.data?.detail || "Login Failed");
@@ -36,6 +37,7 @@ function Login() {
   };
   return (
     <div className="auth-container">
+      <BackButton/>
       {/* LEFT SIDE */}
       <div className="auth-left">
         <div className="auth-left-content">

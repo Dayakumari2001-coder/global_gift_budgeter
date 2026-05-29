@@ -5,7 +5,7 @@ from app.config import settings
 
 engine = create_engine(
     settings.DATABASE_URL,
-    echo=False, pool_pre_ping=True
+    echo=False, pool_pre_ping=True, pool_recycle=3600
 )
 
 SESSIONLOCAL = scoped_session(sessionmaker(

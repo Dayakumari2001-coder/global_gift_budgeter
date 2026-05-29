@@ -5,6 +5,7 @@ import API from "../services/api";
 import "../styles/auth.css";
 import {getCurrencyDetails} from "../utils/Helpers";
 import { getCurrencies } from "../api/currency";
+import BackButton from "../components/BackButton";
 
 function Register() {
   // CREATE OPTIONS
@@ -104,6 +105,7 @@ function Register() {
   };
   return (
     <div className="auth-container">
+      <BackButton/>
       {/* LEFT SIDE */}
       <div className="auth-left">
         <div className="auth-left-content">
@@ -138,7 +140,7 @@ function Register() {
             value={password} onChange={(e)=>setPassword(e.target.value)} />
             <Select
               options={currencyOptions}
-              placeholder="Select Home Currency"
+              placeholder="Select Primary Wallet Currency"
               className="currency-select"
               styles={customSelectStyles}
               isSearchable

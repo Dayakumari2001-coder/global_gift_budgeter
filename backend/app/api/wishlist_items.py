@@ -85,11 +85,41 @@ def update_item(item_id: int, item_data: WishlistItemUpdate, db: Session = Depen
 
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
+    wishlist = db.query(Wishlist).filter(  Wishlist.id == item.wishlist_id ).first()
+    user = db.query(User).filter(User.id == wishlist.user_id
+    ).first()
+
+    home_currency = user.home_currency.upper()
+    foreign_currency = item_data.foreign_currency.upper()
+
+    if foreign_currency == home_currency:
+        converted_price = item_data.foreign_price
+    else:
+        from_rate = db.query(ExchangeRate).filter(
+            ExchangeRate.from_currency == "USD",
+            ExchangeRate.to_currency == foreign_currency
+        ).first()
+
+        to_rate = db.query(ExchangeRate).filter(
+            ExchangeRate.from_currency == "USD",
+            ExchangeRate.to_currency == home_currency
+        ).first()
+
+        if not from_rate or not to_rate:
+            raise HTTPException(
+                status_code=404,
+                detail="Currency not found in exchange_rate data."
+            )
+        rate = (
+            to_rate.rate / from_rate.rate
+        )
+        converted_price = Decimal(str(item_data.foreign_price)) * rate
 
     item.item_name = item_data.item_name
     item.description = item_data.description
     item.foreign_price = item_data.foreign_price
     item.foreign_currency = item_data.foreign_currency
+    item.converted_price = round(converted_price, 2)
 
     db.commit()
     db.refresh(item)

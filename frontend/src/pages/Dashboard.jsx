@@ -7,10 +7,12 @@ import API from "../services/api";
 import "../styles/dashboard.css";
 import "../styles/wishlist.css";
 
-
 function Dashboard() {
   const [wishlists, setWishlists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showWishlistForm,setShowWishlistForm]=useState(false);
+  const [editingWishlist, setEditingWishlist] =useState(null);
+  const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
   useEffect(() => {
@@ -43,6 +45,31 @@ function Dashboard() {
       setCreating(false);
     }
   }
+
+  // EDIT WISHLIST
+function handleEditWishlist(wishlist) {
+  setEditingWishlist( wishlist );
+  setShowWishlistForm(true);
+}
+  async function handleUpdateWishlist( wishlistData ) {
+    try {
+      setEditing(true);
+      await API.put(
+        `/wishlists/${editingWishlist.id}`,
+        wishlistData
+      );
+      await fetchWishlists();
+      setEditingWishlist(null);
+      setShowWishlistForm(false);
+    } catch (error) {
+      console.log(error);
+      alert(
+        "Failed to update wishlist"
+      );
+    } finally {
+      setEditing(false);
+    }
+  }
   // DELETE WISHLIST
   async function handleDeleteWishlist(wishlistId) {
     const confirmDelete = window.confirm("Are you sure you want to delete this wishlist?");
@@ -69,11 +96,8 @@ function Dashboard() {
             <p>Manage your global gift budgets</p>  
           </div>
         </div>
-        {error && <div className="dashboard-error">{error}</div>}    
-        {/* CREATE WISHLIST FORM */}
-        <div className="dashboard-section">
-            <WishlistForm onCreate={handleCreateWishlist} />
-        </div>
+        {error && <div className="dashboard-error">{error}</div>}
+
         {/* EMPTY STATE */}
         {!loading && wishlists.length === 0 &&(
             <div className="empty-state">
@@ -81,10 +105,49 @@ function Dashboard() {
                 <p>Create your first wishlist to start tracking gifts and budgets.</p>
             </div>
         )}
+         {/* CREATE WISHLIST FORM */}
+        <div className="dashboard-top-actions">
+          <button
+            className="create-wishlist-btn"
+            onClick={() =>
+              setShowWishlistForm(
+                !showWishlistForm
+              )
+            }
+          >
+            {showWishlistForm
+              ? "Close"
+              : "+ Create Wishlist"}
+          </button>
+        </div>
+        {showWishlistForm && (
+          <WishlistForm
+              key={
+                editingWishlist
+                  ? editingWishlist.id
+                  : "create-mode"
+              }
+              onCreate={
+                editingWishlist
+                  ? handleUpdateWishlist
+                  : handleCreateWishlist
+              }
+              initialData={ editingWishlist }
+              isEditing={ editingWishlist !== null}
+              creating={creating}
+              editing={editing}
+              onCancelEdit={() => {
+                setEditingWishlist(null);
+                setShowWishlistForm(false);
+              }}
+          />
+        )}
         {/* WISHLIST GRID */}
         {wishlists.length > 0 && (
             <div className="wishlist-grid">{wishlists.map((wishlist, index) => (
-                <WishlistCard key={wishlist.id} wishlist={wishlist} displayNumber={index + 1} onDelete={handleDeleteWishlist}/>
+                <WishlistCard key={wishlist.id} wishlist={wishlist} displayNumber={index + 1}
+                onEdit={handleEditWishlist}
+                onDelete={handleDeleteWishlist}/>
             ))}</div>
         )}
       </div>

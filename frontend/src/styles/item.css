@@ -29,6 +29,7 @@
 .item-form-section {
   max-width: 700px;
   margin-bottom: 40px;
+  margin:0 auto;
 }
 .item-form {
   background:
@@ -203,6 +204,41 @@
   color: white;
   font-weight: 600;
   transition: 0.3s;
+}
+
+.editing-mode {
+  border: 2px solid #6a5cff;
+  box-shadow:
+    0 0 20px rgba(
+      106,
+      92,
+      255,
+      0.25
+    );
+
+  background:
+    linear-gradient(
+      to right,
+      #a87cee,
+      #eae7e7
+    );
+}
+
+.editing-note {
+
+  background: #ede9fe;
+  color: #5b21b6;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  border: 1px solid #c4b5fd;
+}
+
+.cancel-btn {
+  margin-top: 10px;
+  background: #ef4444;
+  color: white;
 }
 
 .delete-item-btn:hover {

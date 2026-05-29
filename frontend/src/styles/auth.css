@@ -202,7 +202,7 @@ body {
   margin-bottom: 16px;
   font-size: 14px;
   font-weight: 500;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.05s ease;
 }
 
 @keyframes fadeIn {

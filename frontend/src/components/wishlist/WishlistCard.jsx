@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 
-function WishlistCard({wishlist, onDelete, displayNumber}) {
+function WishlistCard({wishlist, onDelete, displayNumber, onEdit}){
   return (
     <div className="wishlist-card">
         <div className="wishlist-card-header">
@@ -12,6 +12,7 @@ function WishlistCard({wishlist, onDelete, displayNumber}) {
         </div>
         <div className="wishlist-card-actions">
             <Link to={`/wishlists/${wishlist.id}`}className="view-btn">Open</Link>
+            <button className="edit-btn" onClick={() => onEdit(wishlist)}> Edit</button>
             <button className="delete-btn" onClick={() => onDelete(wishlist.id)}>Delete</button>
         </div>
     </div>
